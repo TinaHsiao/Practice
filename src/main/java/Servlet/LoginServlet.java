@@ -36,18 +36,25 @@ public class LoginServlet extends HttpServlet {
 		if(!CheckInput.checkEmpty(request, errorMessage, "password", "密碼")){
 			if(!service.checkPassword(request.getParameter("memberId"),request.getParameter("password"))){
 				errorMessage.put("password", "密碼錯誤");
+			}else{
+				session.setAttribute("loginOK", true);
 			}
 		}
-			
 		
 		// 如果有錯誤，呼叫view元件，送回錯誤訊息
-		if (!errorMessage.isEmpty()) {
+		if (errorMessage.isEmpty()) {
+			String contextPath = getServletContext().getContextPath();
+			String target = (String)session.getAttribute("target");
+			if(target != null){
+				session.removeAttribute("target");
+				response.sendRedirect(response.encodeRedirectURL(contextPath+target));
+			}else{
+				response.sendRedirect(response.encodeRedirectURL(contextPath + "/index.jsp"));
+			}			
+			return;
+		}else{			
 			RequestDispatcher rd = request.getRequestDispatcher("/user/login.jsp");
 			rd.forward(request, response);
-			return;
-		}else{
-			String contextPath = getServletContext().getContextPath();
-			response.sendRedirect(response.encodeRedirectURL(response.encodeRedirectURL(contextPath + "/index.jsp")));
 		}
 	}
 }

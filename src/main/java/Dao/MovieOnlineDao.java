@@ -3,12 +3,23 @@ package Dao;
 import java.sql.*;
 import java.util.*;
 
-import Util.LoadProperties;
-import Util.ProDriverManager;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
 
 public class MovieOnlineDao {
 
-	private Properties properties= LoadProperties.load();
+	DataSource ds = null;
+	public MovieOnlineDao() {
+		try {
+			Context context = new InitialContext();
+			ds = (DataSource) context.lookup("java:comp/env/jdbc/UserDB");
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+	}	
 	
 	
 	public static void main(String[] args) {
@@ -17,18 +28,21 @@ public class MovieOnlineDao {
 	}
 
 	public void movieOnline(String ptime,int movie,String roomid){
-		addMovieSchedule(ptime,movie,roomid);
-		createSaleSeat(ptime,movie,roomid);	
+		long playid = addMovieSchedule(ptime,movie,roomid);
+		createSaleSeat(playid,roomid);	
 	}
 	
-	public void addMovieSchedule(String ptime,int movie,String roomid){
-		Connection conn = null;
+	public long addMovieSchedule(String ptime,int movie,String roomid){
+		long playid = -1;
+		Connection conn= null;
+		ResultSet rs = null;
 		try{
-			conn = ProDriverManager.getConnection(properties);
+			conn = ds.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("INSERT INTO playlist ");
 			sb.append("(ptime,movie,roomid) ");
+			sb.append("OUTPUT INSERTED.PLAYID ");
 			sb.append("VALUES (?,?,?) ");
 			PreparedStatement pstmt = conn.prepareStatement(sb.toString());
 						
@@ -36,8 +50,11 @@ public class MovieOnlineDao {
 			pstmt.setInt(2, movie);
 			pstmt.setString(3,roomid);
 			
-			pstmt.executeUpdate();
+			rs = pstmt.executeQuery();
 			
+			if(rs.next()){
+				playid = rs.getLong("PLAYID");
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -49,6 +66,8 @@ public class MovieOnlineDao {
 					e.printStackTrace();
 				}
 		}
+		
+		return playid;
 	}
 	
 	public HashMap<String,Integer> searchTheaterSeat(String theater){
@@ -56,7 +75,7 @@ public class MovieOnlineDao {
 		Connection conn = null;
 		ResultSet rs = null;
 		try{
-			conn = ProDriverManager.getConnection(properties);
+			conn = ds.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT SEAT_ROW,SEAT_COL ");
@@ -91,23 +110,22 @@ public class MovieOnlineDao {
 		return hs;
 	}
 	
-	public void createSaleSeat(String ptime,int movie,String roomid){
+	public void createSaleSeat(long palyid,String roomid){
 		HashMap<String,Integer> hs = searchTheaterSeat(roomid);
 		Connection conn = null;
 		try{
-			conn = ProDriverManager.getConnection(properties);
+			conn = ds.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("INSERT INTO SEATS ");
-			sb.append("(ptime,movie,seat_num,sold) ");
-			sb.append("VALUES (?,?,?,0) ");
+			sb.append("(playid,seat_num,sold) ");
+			sb.append("VALUES (?,?,0) ");
 			PreparedStatement pstmt = conn.prepareStatement(sb.toString());
 						
 			for(int i=1;i<=hs.get("row");i++){
 				for(int j=1;j<=hs.get("col");j++){
-					pstmt.setString(1,ptime);
-					pstmt.setInt(2, movie);
-					pstmt.setString(3,(i<10?"0"+i:i)+"-"+(j<10?"0"+j:j));
+					pstmt.setLong(1,palyid);
+					pstmt.setString(2,(i<10?"0"+i:i)+"-"+(j<10?"0"+j:j));
 					
 					pstmt.addBatch();	//(ex:A廳 25-20)20筆加入清單
 				}
@@ -131,7 +149,7 @@ public class MovieOnlineDao {
 		Connection conn = null;
 		ResultSet rs = null;
 		try{
-			conn = ProDriverManager.getConnection(properties);
+			conn = ds.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT MOVIE_ID,MOVIE_NAME ");
@@ -168,7 +186,7 @@ public class MovieOnlineDao {
 		Connection conn = null;
 		ResultSet rs = null;
 		try{
-			conn = ProDriverManager.getConnection(properties);
+			conn = ds.getConnection();
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT roomid ");
@@ -196,5 +214,43 @@ public class MovieOnlineDao {
 		}
 		
 		return list;
+	}
+	
+	public List<HashMap<String,String>> searchPlayList(){
+		List<HashMap<String,String>> list =new ArrayList<HashMap<String,String>>();
+		Connection conn = null;
+		ResultSet rs = null;
+		try{
+			conn = ds.getConnection();
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT p.playid,m.MOVIE_NAME,CONVERT(varchar(16),p.ptime,120) ptime ");
+			sb.append("FROM playlist p ");
+			sb.append("JOIN MOVIE_INFO m ON p.movie=m.MOVIE_ID ");
+			
+			PreparedStatement pstmt = conn.prepareStatement(sb.toString());
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				HashMap<String,String> hs = new HashMap<String,String>();
+				hs.put("playid", "" +rs.getLong("playid"));
+				hs.put("movieName", rs.getString("MOVIE_NAME"));
+				hs.put("ptime", rs.getString("ptime"));
+				list.add(hs);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				try {
+					rs.close();
+					conn.close();
+				} catch(SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		
+		return list;		
 	}
 }

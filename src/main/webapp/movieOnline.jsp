@@ -43,7 +43,7 @@
 <ul>
 <li><a href="index.jsp">Home</a></li>
 <li><a href="#">MovieOnline</a></li>
-<li><a href="orderTicket.jsp">OrderTicket</a></li>
+<li><a href="OrderTicket.do">OrderTicket</a></li>
 </ul>
 </div>
 
@@ -52,32 +52,70 @@
 
 <h2><a href="#">License and terms of use</a></h2>
 <form id="form" action="movieOnline.do" method="post">
-	播放時間:<input type="text" name="ptime"/><br/>
-	電影代號:
-	<select name="movie">
-		<c:forEach items="${movieList}" var="movie">
-			<option value="${movie.movie_id}">
-				<c:out value="${movie.movie_name}"/>
-			</option>
-		</c:forEach>
-	</select>
-	<br/>
-	播放廳院:<select name="roomid">
-		<c:forEach items="${roomList}" var="room">
-			<option value="${room.roomid}">
-				<c:out value="${room.roomid}"/>
-			</option>
-		</c:forEach>
-	</select>
-	<br/>
-	<input type="hidden" id="action" name="action"></input>
-</form>
+<table>
+	<tr>
+		<td>
+			播放時間:
+		</td>
+		<td>
+			<input type="text" name="ptime"/>
+		</td>
+	</tr>
+	<tr>
+		<td style="width:60px;">電影名稱:</td>
+		<td align="left">
+			<select name="movie">
+				<c:forEach items="${movieList}" var="movie">
+					<option value="${movie.movie_id}">
+						<c:out value="${movie.movie_name}"/>
+					</option>
+				</c:forEach>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>播放廳院:</td>
+		<td align="left">
+			<select name="roomid">
+				<c:forEach items="${roomList}" var="room">
+					<option value="${room.roomid}">
+						<c:out value="${room.roomid}"/>
+					</option>
+				</c:forEach>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
 
-<input type="button" class="" id="btn_a" value="addMovieSchedule"></input>
-<input type="button" class="" id="btn_c" value="createSaleSeat"></input>
-<input type="button" class="" id="btn_o" value="movieOnline"></input>
-<br>
-<br>
+			<input type="button" class="" id="btn_a" value="addMovieSchedule"/>
+			<input type="button" class="" id="btn_o" value="movieOnline"/>
+		</td>
+	</tr>
+	
+	<tr>
+		<td>電影代號:</td>
+		<td align="left">
+			<select name="playid">
+				<c:forEach items="${playList}" var="playList">
+					<option value="${playList.playid}">
+						<c:out value="${playList.playid}.${playList.movieName}_${playList.ptime}"/>
+					</option>
+				</c:forEach>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input type="hidden" id="action" name="action"/>
+			
+			<input type="button" class="" id="btn_c" value="createSaleSeat"/>
+		</td>
+	</tr>
+</table>
+</form>
+<br></br>
+<br></br>
 <span style="color:red;font-size:20px">
 	<c:choose>
 		<c:when test='${"A" eq action}'>

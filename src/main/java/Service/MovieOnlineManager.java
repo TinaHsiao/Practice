@@ -9,11 +9,11 @@ public class MovieOnlineManager {
 	
 	private MovieOnlineDao dao = new MovieOnlineDao();
 
-	public void movieAction(String action,String ptime,String movie,String roomid){
+	public void movieAction(String action,String ptime,String movie,String roomid,String playid){
 		if("A".equals(action)){
 			dao.addMovieSchedule(ptime, Integer.parseInt(movie), roomid);
 		}else if("C".equals(action)){
-			dao.createSaleSeat(ptime, Integer.parseInt(movie), roomid);
+			dao.createSaleSeat(Long.parseLong(playid), roomid);
 		}else if("O".equals(action)){
 			dao.movieOnline(ptime, Integer.parseInt(movie), roomid);
 		}
@@ -27,5 +27,9 @@ public class MovieOnlineManager {
 	public List<HashMap<String,String>> searchRoomList(){
 		//List<HashMap<String,String>> list = dao.searchMovieIfo();
 		return dao.searchRoom();
+	}
+	
+	public List<HashMap<String,String>> searchPlayList(){
+		return dao.searchPlayList();
 	}
 }
