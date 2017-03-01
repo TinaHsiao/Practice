@@ -8,6 +8,9 @@
 <meta http-equiv="Content-Language" content="English" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="css/jquery.datetimepicker.min.css" media="screen" />
+<script src="js/jquery-1.12.4.min.js"></script>
+<script src="js2/jquery.datetimepicker.full.min.js"></script>
 <script>
 	window.onload = function(){init();};
 	function init(){
@@ -29,6 +32,27 @@
 	function submit(){
 		document.getElementById("form").submit();
 	}
+</script>
+<!--  <script>
+	$(document).ready(function(){
+		$.datepicker.setDefaults( $.datepicker.regional[ "zh-TW" ] );
+		$( "#ptime" ).datepicker({
+			changeMonth: true,
+			changeYear: true,
+			changeTime: true,
+			yearRange: "-100:+0",
+			dateFormat: "yy-mm-dd"
+		});
+	});
+</script>-->
+<script>
+	$(document).ready(function(){
+		$.datetimepicker.setLocale('zh-TW');
+		$("#ptime").datetimepicker({
+			format:'Y-m-d H:i',   
+			inline:false	
+		});
+	});
 </script>
 </head>
 <body>
@@ -58,7 +82,8 @@
 			播放時間:
 		</td>
 		<td>
-			<input type="text" name="ptime"/>
+			<input type="text" name="ptime" id="ptime" value="${param.ptime}" size="16" />
+<!-- 			<input type="text" name="ptime" id="ptime" size="16"/> -->
 		</td>
 	</tr>
 	<tr>

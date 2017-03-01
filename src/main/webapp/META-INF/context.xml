@@ -1,10 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?> 
 <Context displayName="JSP Servlet Example" docBase="example" path="/example" reloadable="true">
   <!--                  SQLServer                  -->
+  <!--       url="jdbc:sqlserver://127.0.0.1:1433;DatabaseName=Practic" -->
+  <!-- 		 url="jdbc:sqlserver://192.168.56.117:2466;DatabaseName=Practic" -->
 	<Resource name="jdbc/UserDB" type="javax.sql.DataSource"
       username="sa" password="sa123456"
       driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-      url="jdbc:sqlserver://192.168.56.117:2466;DatabaseName=Practice"
+      url="jdbc:sqlserver://127.0.0.1:1433;DatabaseName=Practice"
       maxActive="8"
       maxIdle="4"
       maxWait="5000"
