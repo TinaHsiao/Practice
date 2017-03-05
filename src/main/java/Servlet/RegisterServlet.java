@@ -19,7 +19,29 @@ public class RegisterServlet extends HttpServlet {
 	
 	UserManager service = new UserManager();
 	
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+		response.setCharacterEncoding("UTF-8");
+		
+		String memberId = request.getParameter("memberId");
+		boolean checkExist = service.checkMemberId(memberId);
+		String checkExistStr = "";
+		if(checkExist == true){
+			checkExistStr = "true";
+		}else{
+			checkExistStr = "false";
+		}
+		response.getWriter().append(checkExistStr);
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+				
 		//取出session物件
 		HttpSession session = request.getSession();
 		// 定義存放錯誤訊息的 Collection物件
@@ -57,5 +79,7 @@ public class RegisterServlet extends HttpServlet {
 			String contextPath = getServletContext().getContextPath();
 			response.sendRedirect(response.encodeRedirectURL(response.encodeRedirectURL(contextPath + "/index.jsp")));
 		}
+		
+		
 	}
 }

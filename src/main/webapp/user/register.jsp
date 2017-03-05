@@ -19,7 +19,54 @@
 			yearRange: "-100:+0",
 			dateFormat: "yy-mm-dd"
 		});
+		init();
 	});
+	
+	function init(){
+		$('#mid').blur(function(){
+			checkAcount($('#mid').val());
+		});
+		$('#loading').hide();
+		$('#noneExsit').hide();
+		$('#exsit').hide();
+	}
+	
+	
+	function checkAcount(memberId){
+		$.ajax({
+			url:"user.do",
+			dataType:"text",
+			method:"get",
+			async:true,
+			data:{"memberId":memberId},
+			success:function(returndata){
+				ifExsit(returndata);
+			},
+			beforeSend:function(){
+                $('#loading').show();
+                $('#exsit').hide();
+                $('#noneExsit').hide();
+            },
+            complete:function(){
+                $('#loading').hide();
+            }
+			
+		});
+		
+	}
+	function ifExsit(returndata){
+		if(returndata=="true"){
+			$('#noneExsit').hide();
+			$('#exsit').show();
+			
+		}else{
+			$('#exsit').hide();
+			$('#noneExsit').show();
+		}
+	}
+	
+	
+	
 </script>
 <title>Insert title here</title>
 </head>
@@ -36,13 +83,19 @@
 					<tr bgcolor='tan' >
 					    <td width="120" height="40">帳號:</td>
 					    <td width="600" height="40" align="left" >
-					    	<input id='num' style="text-align:left" name="memberId" value="${param.memberId}" type="text" size="14">
+					    	<input id='mid' style="text-align:left" name="memberId" value="${param.memberId}" type="text" size="14">
+					    	<img id="loading" width="20" src="../images/loading.gif" />
+					    	
+					    	<div id="exsit" style="color:red; font-size:60%; display:inline"><img id="img_exsit" src="../images/false.jpg" />帳號已存在</div>
+					    	<div id="noneExsit" style="color:blue; font-size:60%; display:inline"><img id="img_noneExsit" src="../images/true.jpg" /></div>
+					    	
 					    	<div style="color:#FF0000; font-size:60%; display:inline">${ErrorMsg.memberId}</div>
+					    </td>
 					</tr>
 					<tr bgcolor='tan' >
 					    <td width="120" height="40">密碼:</td>
 					    <td width="600" height="40" align="left" >
-					         <input id='num' style="text-align:left" name="password" value="${param.password}" type="password" size="14">
+					         <input id='pwd' style="text-align:left" name="password" value="${param.password}" type="password" size="14">
 					         <div style="color:#FF0000; font-size:60%; display:inline">${ErrorMsg.password}</div>
 					    </td>
 					</tr>

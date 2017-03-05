@@ -49,10 +49,100 @@
 	$(document).ready(function(){
 		$.datetimepicker.setLocale('zh-TW');
 		$("#ptime").datetimepicker({
-			format:'Y-m-d H:i',   
-			inline:false	
+			format:'Y-m-d',   
+			inline:false,
+			closeOnDateSelect:true,
+			onShow:function(ct,$i){
+				$i.prop("readonly",false);
+			},
+			onClose:function(ct,$i){
+				$i.prop("readonly",true);
+			},
+			timepicker:false
 		});
+		
+		$('#ptime').on('click', function () {
+		    $('#ptime').datetimepicker('show');
+		});
+		
+		init();
+		
 	});
+	
+	function init(){
+		timeShow();
+		$('#ptime').change(function(){
+			timeShow();
+			getSchedule();
+		});
+		$('#roomid').change(function(){
+			getSchedule();
+		});
+	};
+	
+	function timeShow(){
+		if($('#ptime').val()!=''){
+			$('#tr_time_show').show();
+		}else{
+			$('#tr_time_show').hide();
+		}
+	};
+	
+	function getSchedule(){
+		scheduleReset();
+		loadSchedule();
+	}
+	
+	function loadSchedule(){
+		searchMovieSchedule($('#roomid').val(),$('#ptime').val());
+	}
+	
+	function createSchedule(movieSchedule){
+		//var movieSchedule = searchMovieSchedule($('#roomid').val(),$('#ptime').val());
+		for(var i=0;i<movieSchedule.length;i++){
+			$tr = $('<tr><td></td><td></td><td></td></tr>');
+			$tr.css("background-color","lightblue");
+			$('td:eq(0)',$tr).html(movieSchedule[i].movie_name);
+			$('td:eq(1)',$tr).html(movieSchedule[i].stime);
+			$('td:eq(2)',$tr).html(movieSchedule[i].etime);
+			$('#schedule').append($tr);
+		}
+		
+	};
+	
+	function scheduleReset(){
+		$('#schedule').css("text-align","center");
+		$('#schedule').html("");
+		$titleTr = $('<tr><td>電影名稱</td><td>開始時間</td><td>結束時間</td></tr>');
+		$titleTr.css("background-color","lightyellow");
+		$('#schedule').append($titleTr);
+	};
+	
+	function searchMovieSchedule(room,date){
+//  		var movieSchedule = [{"movie_name":"測試1","stime":"16:59","etime":"19:48"},{"movie_name":"測試2","stime":"21:30","etime":"00:48"}];
+ 		var movieSchedule;
+		$.ajax({
+			url: "movieSchedule.search",
+			dataType : "json",
+			method : "POST",
+			async:true,
+			data:{"room":room,"date":date},
+			success:function(returnData){
+				//movieSchedule = returnData;
+				createSchedule(returnData);
+			},
+			beforeSend:function(){
+                $('#loading').show();
+                $('#schedule').hide();
+            },
+            complete:function(){
+                $('#loading').hide();
+                $('#schedule').show();
+            }
+		});
+		
+		//return movieSchedule;
+	};
 </script>
 </head>
 <body>
@@ -78,12 +168,31 @@
 <form id="form" action="movieOnline.do" method="post">
 <table>
 	<tr>
-		<td>
+		<td>播放廳院:</td>
+		<td align="left">
+			<select name="roomid" id="roomid">
+				<c:forEach items="${roomList}" var="room">
+					<option value="${room.roomid}">
+						<c:out value="${room.roomid}"/>
+					</option>
+				</c:forEach>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td id="test">
 			播放時間:
 		</td>
 		<td>
 			<input type="text" name="ptime" id="ptime" value="${param.ptime}" size="16" />
 <!-- 			<input type="text" name="ptime" id="ptime" size="16"/> -->
+		</td>
+	</tr>
+	<tr id="tr_time_show">
+		<td colspan="2">
+			<table id="schedule" width="100%">
+			</table>
+			<img id="loading" src="images/loading.gif" />
 		</td>
 	</tr>
 	<tr>
@@ -93,18 +202,6 @@
 				<c:forEach items="${movieList}" var="movie">
 					<option value="${movie.movie_id}">
 						<c:out value="${movie.movie_name}"/>
-					</option>
-				</c:forEach>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td>播放廳院:</td>
-		<td align="left">
-			<select name="roomid">
-				<c:forEach items="${roomList}" var="room">
-					<option value="${room.roomid}">
-						<c:out value="${room.roomid}"/>
 					</option>
 				</c:forEach>
 			</select>
