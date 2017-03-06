@@ -89,7 +89,6 @@
 	};
 	
 	function getSchedule(){
-		scheduleReset();
 		loadSchedule();
 	}
 	
@@ -99,6 +98,7 @@
 	
 	function createSchedule(movieSchedule){
 		//var movieSchedule = searchMovieSchedule($('#roomid').val(),$('#ptime').val());
+		scheduleReset();
 		for(var i=0;i<movieSchedule.length;i++){
 			$tr = $('<tr><td></td><td></td><td></td></tr>');
 			$tr.css("background-color","lightblue");

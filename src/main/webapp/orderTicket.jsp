@@ -44,7 +44,7 @@
 	<c:forEach items="${orderTicketList}" var="o">
 		<tr>
 			<td>
-				<c:out value="${o.movieName}"/>
+				<c:out value="${o.movie_name}"/>
 			</td>
 			<td>
 				<c:out value="${o.pdate}"/>

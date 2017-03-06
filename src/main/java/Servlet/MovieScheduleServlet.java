@@ -32,8 +32,6 @@ public class MovieScheduleServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		String room = request.getParameter("room");
 		String date = request.getParameter("date");
-		System.out.println("room:"+room);
-		System.out.println("date:"+date);
 		
 		List<HashMap<String,String>> list = service.searchMovieSchedule(room,date);
 

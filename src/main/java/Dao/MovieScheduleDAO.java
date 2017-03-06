@@ -97,7 +97,6 @@ public class MovieScheduleDAO {
 				list.add(hs);
 			}
 			
-			
 		}catch (Exception e) {
 		e.printStackTrace();
 		}finally {
