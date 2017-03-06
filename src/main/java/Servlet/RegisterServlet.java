@@ -23,10 +23,16 @@ public class RegisterServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		
 		String memberId = request.getParameter("memberId");
+		boolean isEmpty = false;
+		if(memberId==null|| memberId.trim().length() == 0){
+			isEmpty=true;
+		}
 		boolean checkExist = service.checkMemberId(memberId);
 		String checkExistStr = "";
 		if(checkExist == true){
 			checkExistStr = "true";
+		}else if(checkExist==false && isEmpty==true){
+			checkExistStr = "error";
 		}else{
 			checkExistStr = "false";
 		}

@@ -68,4 +68,48 @@ public class MovieScheduleDAO {
 		return list;		
 	}
 	
+	
+	public List<HashMap<String,String>> searchScheduleForOrder(){
+		List<HashMap<String,String>> list =new ArrayList<HashMap<String,String>>();
+		Connection conn = null;
+		ResultSet rs = null;
+		try{
+			conn = ds.getConnection();
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT m.MOVIE_NAME,CONVERT(VARCHAR(10), p.PTIME,120) PDATE,CONVERT(VARCHAR(5),p.PTIME,114) STIME, ");
+			sb.append("		  CONVERT(VARCHAR(5),DATEADD(MINUTE, m.MOVIE_LENGTH,p.PTIME),114) ETIME, p.ROOMID ");
+			sb.append("FROM playlist p ");
+			sb.append("JOIN MOVIE_INFO m ON p.movie=m.MOVIE_ID ");
+			sb.append("WHERE p.PTIME >= getdate() ");
+			sb.append("ORDER BY STIME DESC ");
+			
+			PreparedStatement pstmt = conn.prepareStatement(sb.toString());
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				HashMap<String,String> hs= new HashMap<String,String>();
+				hs.put("movie_name", rs.getString("movie_name"));
+				hs.put("pdate", rs.getString("pdate"));
+				hs.put("stime", rs.getString("stime"));
+				hs.put("etime", rs.getString("etime"));
+				hs.put("roomid", rs.getString("roomid"));
+				
+				list.add(hs);
+			}
+			
+			
+		}catch (Exception e) {
+		e.printStackTrace();
+		}finally {
+			if (conn != null)
+				try {
+					rs.close();
+					conn.close();
+				} catch(SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		return list;
+	}
+	
 }

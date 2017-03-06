@@ -29,6 +29,7 @@
 		$('#loading').hide();
 		$('#noneExsit').hide();
 		$('#exsit').hide();
+		$('#emptyID').hide()
 	}
 	
 	
@@ -46,6 +47,7 @@
                 $('#loading').show();
                 $('#exsit').hide();
                 $('#noneExsit').hide();
+                $('#emptyID').hide()
             },
             complete:function(){
                 $('#loading').hide();
@@ -56,12 +58,18 @@
 	}
 	function ifExsit(returndata){
 		if(returndata=="true"){
-			$('#noneExsit').hide();
 			$('#exsit').show();
+			$('#noneExsit').hide();
+			$('#emptyID').hide()
 			
-		}else{
+		}else if(returndata=="error"){
+			$('#emptyID').show()
 			$('#exsit').hide();
-			$('#noneExsit').show();
+			$('#noneExsit').hide();
+		}else{
+			$('#noneExsit').show()
+			$('#exsit').hide();
+			$('#emptyID').hide();
 		}
 	}
 	
@@ -87,6 +95,7 @@
 					    	<img id="loading" width="20" src="../images/loading.gif" />
 					    	
 					    	<div id="exsit" style="color:red; font-size:60%; display:inline"><img id="img_exsit" src="../images/false.jpg" />帳號已存在</div>
+					    	<div id="emptyID" style="color:red; font-size:60%; display:inline"><img id="img_exsit" src="../images/false.jpg" />此欄不得為空</div>
 					    	<div id="noneExsit" style="color:blue; font-size:60%; display:inline"><img id="img_noneExsit" src="../images/true.jpg" /></div>
 					    	
 					    	<div style="color:#FF0000; font-size:60%; display:inline">${ErrorMsg.memberId}</div>

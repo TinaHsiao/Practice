@@ -2,10 +2,10 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="subTitle" value="orderTicket" scope="session"/>
-<c:if test="${loginOK != true }">
-	<c:set var="target" value="/OrderTicket.do" scope="session"/>
-	<c:redirect url="/user/login.jsp"/>
-</c:if>
+<%-- <c:if test="${loginOK != true }"> --%>
+<%-- 	<c:set var="target" value="/OrderTicket.do" scope="session"/> --%>
+<%-- 	<c:redirect url="/user/login.jsp"/> --%>
+<%-- </c:if> --%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -41,13 +41,22 @@
 	<tr>
 		<th colspan="2">電影場次查詢</th>
 	</tr>
-	<c:forEach items="${playList}" var="p">
+	<c:forEach items="${orderTicketList}" var="o">
 		<tr>
 			<td>
-				<c:out value="${p.movieName}"/>
+				<c:out value="${o.movieName}"/>
 			</td>
 			<td>
-				<c:out value="${p.ptime}"/>
+				<c:out value="${o.pdate}"/>
+			</td>
+			<td>
+				<c:out value="${o.stime}"/>
+			</td>
+			<td>
+				<c:out value="${o.etime}"/>
+			</td>
+			<td>
+				<c:out value="${o.roomid}"/>
 			</td>
 		</tr>
 	</c:forEach>	

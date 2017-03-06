@@ -12,4 +12,8 @@ public class MovieScheduleManager {
 	public List<HashMap<String,String>> searchMovieSchedule(String room,String date){
 		return dao.searchMovieSchedule(room,date);
 	}
+	
+	public List<HashMap<String,String>> searchScheduleForOrder(){
+		return dao.searchScheduleForOrder();
+	}
 }
